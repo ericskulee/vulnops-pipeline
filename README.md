@@ -1,1 +1,21 @@
 # vulnops-pipeline-
+vulnops-pipeline/
+  README.md
+  docs/
+    workflow.md
+    triage-playbook.md
+    false-positives.md
+  sample_data/
+    scans/
+    assets.csv
+  src/
+    parse_scan.py
+    risk_score.py
+    sla_assign.py
+    generate_reports.py
+  outputs/
+    prioritized_findings.csv
+    remediation_sla.csv
+  reports/
+    executive-summary.md
+    technical-remediation.md
