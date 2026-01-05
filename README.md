@@ -1,21 +1,22 @@
 # vulnops-pipeline-
-vulnops-pipeline/
-  README.md
-  docs/
-    workflow.md
-    triage-playbook.md
-    false-positives.md
-  sample_data/
-    scans/
-    assets.csv
-  src/
-    parse_scan.py
-    risk_score.py
-    sla_assign.py
-    generate_reports.py
-  outputs/
-    prioritized_findings.csv
-    remediation_sla.csv
-  reports/
-    executive-summary.md
-    technical-remediation.md
+# GRC Evidence Pack + Risk Register
+
+## What this is
+A practical GRC starter kit that demonstrates:
+- a usable risk register with scoring
+- control mapping (objective → implementation → evidence)
+- an audit-ready evidence binder structure
+- vendor risk questionnaire + scoring rubric
+
+## What this proves
+I can translate security requirements into organized controls, collect evidence, and communicate risk clearly.
+
+## Included
+- Risk register template + scoring method
+- Control mapping examples (Access Control, Vuln Mgmt, Logging)
+- Evidence pack structure (policies, procedures, logs, exceptions)
+- Vendor risk questionnaire + scoring
+
+## Next improvements
+- Add sample POA&M format
+- Add quarterly control testing schedule
