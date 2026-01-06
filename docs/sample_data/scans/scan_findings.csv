@@ -1,0 +1,6 @@
+hostname,ip,port,protocol,cve,cvss,title,description
+web-portal-1,10.10.10.10,443,tcp,CVE-2021-44228,10.0,Log4Shell,Remote code execution vulnerability in Log4j
+db-payments-1,10.10.20.20,1433,tcp,CVE-2022-26925,8.8,Windows LSA Spoofing,Privilege escalation vulnerability in Windows
+hr-app-1,10.10.30.30,8080,tcp,CVE-2021-41773,7.5,Apache Path Traversal,Path traversal and possible RCE in Apache HTTP Server
+dev-api-1,10.10.40.40,80,tcp,CVE-2019-0708,9.8,BlueKeep,RDP remote code execution vulnerability
+workstation-22,10.10.50.50,445,tcp,CVE-2017-0144,8.1,EternalBlue,SMB remote code execution vulnerability
