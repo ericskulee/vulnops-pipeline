@@ -1,1 +1,6 @@
-
+asset_id,hostname,ip,business_unit,environment,internet_facing,data_sensitivity,criticality,owner,notes
+A-001,web-portal-1,10.10.10.10,Digital,Production,Y,High,5,IT Ops,Customer-facing web portal
+A-002,db-payments-1,10.10.20.20,Finance,Production,N,High,5,DBA Team,Stores payment records
+A-003,hr-app-1,10.10.30.30,HR,Production,N,Medium,4,HR IT,Internal HR system
+A-004,dev-api-1,10.10.40.40,Engineering,Dev,Y,Low,2,Dev Team,Dev API server
+A-005,workstation-22,10.10.50.50,Operations,Production,N,Medium,3,Helpdesk,Standard workstation
