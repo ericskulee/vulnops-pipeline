@@ -1,0 +1,31 @@
+name: VulnOps Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run pipeline
+        run: |
+          python src/generate_reports.py \
+            --findings sample_data/scans/scan_findings.csv \
+            --assets sample_data/assets.csv \
+            --outdir outputs \
+            --reportdir reports
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: vulnops-outputs
+          path: |
+            outputs/
+            reports/
