@@ -65,61 +65,7 @@ scp scan.xml cyberic@172.16.135.130:~/vulnops-pipeline/sample_data/scans/scan.xm
 ## On Ubuntu inside the repo:
 
 cd ~/vulnops-pipeline
-
-python3 src/nmap_xml_to_findings.py \
-  --xml sample_data/scans/scan.xml \
-  --out sample_data/scans/scan_findings.csv
-
----
-
-# 4) Prioritize + generate reports (Ubuntu)
-
-## Run the pipeline to produce the prioritized CSV and both report types:
-
-python3 src/generate_reports.py \
-  --findings sample_data/scans/scan_findings.csv \
-  --assets sample_data/assets.csv \
-  --known-exploited sample_data/known_exploited_cves.txt \
-  --outdir outputs \
-  --reportdir reports
-
----
-
-# 5) Publish to GitHub (Ubuntu → Git over SSH)
-
-## Commit and push changes from Ubuntu:
-
-git add -A
-git commit -m "Update scan + findings + reports"
-git push origin main
-
----
-
-# Architecture diagram
-
-## flowchart LR
-  - K[Kali VM (Scanner)] -->|Nmap scan| X[scan.xml]
-  - X -->|SCP over SSH| U[Ubuntu VM (Workstation)]
-  - U -->|Parse XML to CSV| F[scan_findings.csv]
-  - U -->|Prioritize findings| P[prioritized_findings.csv]
-  - U -->|Generate reports| R[executive-summary.md + technical-remediation.md]
-   -U -->|Git push (SSH)| G[GitHub repo]
-
----
-
-# Project structure
-
-sample_data/ — sample assets + scan inputs (sanitized/demo)
-
-src/ — parsing, scoring, SLA assignment, report generation
-
-outputs/ — prioritized CSV outputs
-
-reports/ — executive and technical markdown reports
-
-docs/ — triage workflow, false-positive handling, verification notes (optional/future)
-
-# Run it locally (optional)
+$)
 
 ## If you already have Python 3 installed:
 
