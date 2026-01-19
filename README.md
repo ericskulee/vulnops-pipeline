@@ -4,6 +4,8 @@
 
 A practical vulnerability operations workflow that turns raw scan output into **risk-based remediation priorities**, **SLA tracking**, and **executive + technical reports** — with evidence you can show in GitHub.
 
+> **Lab note:** Built and validated in a small VMware Fusion lab using Kali (scanner) + Ubuntu (workstation).
+
 ---
 
 ## What this demonstrates
@@ -38,14 +40,108 @@ Built and validated inside an isolated VMware Fusion lab:
 
 ---
 
-## Architecture diagram
+## How it works (end-to-end)
 
-```mermaid
+### 1) Run a scan (Kali → Nmap XML)
+
+From **Kali**, scan the Ubuntu target and export to XML:
+
+```bash
+sudo nmap -sV -O -Pn 172.16.135.130 -oX scan.xml
+
+---
+
+Transfer scan output (Kali → Ubuntu)
+
+Copy the scan XML from Kali to Ubuntu over SSH:
+
+scp scan.xml cyberic@172.16.135.130:~/vulnops-pipeline/sample_data/scans/scan.xml
+
+3) Convert XML → normalized findings CSV (Ubuntu)
+
+On Ubuntu inside the repo:
+
+cd ~/vulnops-pipeline
+
+python3 src/nmap_xml_to_findings.py \
+  --xml sample_data/scans/scan.xml \
+  --out sample_data/scans/scan_findings.csv
+
+4) Prioritize + generate reports (Ubuntu)
+
+Run the pipeline to produce the prioritized CSV and both report types:
+
+python3 src/generate_reports.py \
+  --findings sample_data/scans/scan_findings.csv \
+  --assets sample_data/assets.csv \
+  --known-exploited sample_data/known_exploited_cves.txt \
+  --outdir outputs \
+  --reportdir reports
+
+5) Publish to GitHub (Ubuntu → Git over SSH)
+
+Commit and push changes from Ubuntu:
+
+git add -A
+git commit -m "Update scan + findings + reports"
+git push origin main
+
+Architecture diagram
 flowchart LR
   K[Kali VM (Scanner)] -->|Nmap scan| X[scan.xml]
-  K -->|SCP over SSH| U[Ubuntu VM (Workstation)]
+  X -->|SCP over SSH| U[Ubuntu VM (Workstation)]
   U -->|Parse XML to CSV| F[scan_findings.csv]
   U -->|Prioritize findings| P[prioritized_findings.csv]
-  U -->|Generate reports| R[Reports (Markdown)]
-  U -->|Git push (SSH)| G[GitHub Repo]
+  U -->|Generate reports| R[executive-summary.md + technical-remediation.md]
+  U -->|Git push (SSH)| G[GitHub repo]
 
+Project structure
+
+sample_data/ — sample assets + scan inputs (sanitized/demo)
+
+src/ — parsing, scoring, SLA assignment, report generation
+
+outputs/ — prioritized CSV outputs
+
+reports/ — executive and technical markdown reports
+
+docs/ — triage workflow, false-positive handling, verification notes (optional/future)
+
+Run it locally (optional)
+
+If you already have Python 3 installed:
+
+python3 src/generate_reports.py \
+  --findings sample_data/scans/scan_findings.csv \
+  --assets sample_data/assets.csv \
+  --known-exploited sample_data/known_exploited_cves.txt \
+  --outdir outputs \
+  --reportdir reports
+
+Evidence (GitHub Actions)
+
+If Actions is enabled, this pipeline can run in CI and generate downloadable artifacts.
+
+To verify:
+
+GitHub repo → Actions
+
+Open the latest successful run
+
+Download the artifact (e.g., vulnops-artifacts) and review generated outputs
+
+Version control approach (hybrid)
+
+To keep the repo recruiter-friendly while still providing proof:
+
+Commit: key outputs and reports (easy to read directly in GitHub)
+
+Artifacts: optionally publish full run artifacts via GitHub Actions
+
+Safety / ethics
+
+All scanning and testing should be performed only on systems you own or are authorized to assess.
+
+Roadmap (future labs)
+
+This repo can be extended with additional security operations workflows (e.g., GRC evidence capture, IAM review checks, patch verification, vuln ticket automation, etc.).
