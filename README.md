@@ -100,7 +100,7 @@ git push origin main
 Paste this directly into your README.md. GitHub renders Mermaid automatically **as long as it’s in a** ```mermaid 
 **block**.
 
-```
+```memaid
 flowchart LR
   K["Kali VM (Scanner)"] -->|"Nmap scan"| X["scan.xml"]
   K -->|"SCP over SSH"| U["Ubuntu VM (Workstation)"]
