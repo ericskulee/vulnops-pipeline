@@ -128,6 +128,7 @@ flowchart LR
 ---
 
 ## Run it Locally (Optional)
+If you already have Python 3 installed:
 
 ```
 python3 src/generate_reports.py \
