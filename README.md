@@ -57,17 +57,15 @@ sudo nmap -sV -O -Pn --reason "$TARGET" -oX scan.xml
 # Optional: timestamped output (nice for keeping history)
 # sudo nmap -sV -O -Pn --reason "$TARGET" -oX "scan_$(date +%F_%H%M).xml"
 
----
-
 ```
-## 2) Transfer scan output (Kali → Ubuntu
+
+### 2) Transfer scan output (Kali → Ubuntu
 Copy the XML from Kali to Ubuntu over SSH:
 ```
 scp scan.xml cyberic@172.16.135.130:~/vulnops-pipeline/sample_data/scans/scan.xml
 ```
----
 
-## 3) Convert XML → normalized findings CSV (Ubuntu
+### 3) Convert XML → normalized findings CSV (Ubuntu
 On **Ubuntu**, inside the repo:
 ```
 cd ~/vulnops-pipeline
@@ -76,9 +74,8 @@ python3 src/nmap_xml_to_findings.py \
   --xml sample_data/scans/scan.xml \
   --out sample_data/scans/scan_findings.csv
 ```
----
 
-## 4) Prioritize + generate reports (Ubuntu)
+### 4) Prioritize + generate reports (Ubuntu)
 Run the pipeline to produce the prioritized CSV and both report types:
 
 ```
@@ -90,9 +87,7 @@ python3 src/generate_reports.py \
   --reportdir reports
 ```
 
----
-
-## 5) Publish to GitHub (Ubuntu → Git over SSH)
+### 5) Publish to GitHub (Ubuntu → Git over SSH)
 Commit and push changes from Ubuntu:
 
 ```
@@ -100,9 +95,8 @@ git add -A
 git commit -m "Update scan + findings + reports"
 git push origin main
 ```
----
 
-## Architecture diagram
+### Architecture diagram
 Paste this directly into your README.md. GitHub renders Mermaid automatically **as long as it’s in a** ```mermaid 
 **block**.
 
@@ -115,19 +109,15 @@ flowchart LR
   U -->|"Generate reports"| R["reports/*.md"]
   U -->|"Git push (SSH)"| G["GitHub Repo"]
 ```
---- 
 
-## Project structure
-
+### Project structure
 - sample_data/ — sample assets + scan inputs (sanitized/demo)
 - src/ — parsing, scoring, SLA assignment, report generation
 - outputs/ — prioritized CSV outputs
 - reports/ — executive and technical markdown reports
 - docs/ — triage workflow, false-positive handling, verification notes (optional/future)
 
----
-
-## Run it Locally (Optional)
+### Run it Locally (Optional)
 If you already have Python 3 installed:
 
 ```
@@ -138,21 +128,24 @@ python3 src/generate_reports.py \
   --outdir outputs \
   --reportdir reports
 ```
----
+### Evidence (GitHub Actions)
+If Actions is enabled, this pipeline can run in CI and generate downloadable artifacts.
 
-## Version control approach (hybrid)
+To verify:
+
+1. GitHub repo → **Actions**
+2. Open the latest successful run
+3. Download the artifact (e.g., vulnops-artifacts) and review generated outputs
+   
+### Version control approach (hybrid)
 To keep the repo recruiter-friendly and still provide proof:
 - **Commit**: key outputs and reports (easy to read directly in GitHub)
 - **Artifacts (Actions):** optionally publish full run artifacts for each CI run
 
----
-
-##  Safety / ethics
+###  Safety / ethics
 All scanning and testing should be performed only on systems you own or are authorized to assess.
 
----
-
-## Roadmap (future labs)
+### Roadmap (future labs)
 This repo can be extended with additional security operations workflows, for example:
 - Windows target VM scanning + normalization
 - GRC evidence capture (controls → evidence mapping)
