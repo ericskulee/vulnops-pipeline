@@ -53,6 +53,93 @@ flowchart LR
   U -->|"Prioritize findings"| P["outputs/prioritized_findings.csv"]
   U -->|"Generate reports"| R["reports/*.md"]
   U -->|"Git push (SSH)"| G["GitHub Repo"]
+```
+# How it works (end-to-end)
+## 1) Run a scan (Kali → Nmap XML)
+From Kali, scan the Ubuntu target and export results to XML:
+**Replace with your target IP**
+```
+TARGET="172.16.135.130"
+```
+**Saved for the pipeline**
+```
+sudo nmap -sV -sC -O -Pn --reason "$TARGET" -oX scan.xml
+```
+## 2) Transfer scan output (Kali → Ubuntu)
+Copy the XML from Kali to Ubuntu over SSH:
+```
+scp scan.xml cyberic@172.16.135.130:~/vulnops-pipeline/sample_data/scans/scan.xml
+```
+## 3) Convert XML → normalized findings CSV (Ubuntu)
+On **Ubuntu**, inside the repo:
+```
+cd ~/vulnops-pipeline
 
+python3 src/nmap_xml_to_findings.py \
+  --xml sample_data/scans/scan.xml \
+  --out sample_data/scans/scan_findings.csv
+```
+## 4) Prioritize + generate reports (Ubuntu)
+Run the pipeline to produce the prioritized CSV and both report types:
+```
+python3 src/generate_reports.py \
+  --findings sample_data/scans/scan_findings.csv \
+  --assets sample_data/assets.csv \
+  --known-exploited sample_data/known_exploited_cves.txt \
+  --outdir outputs \
+  --reportdir reports
+```
+## 5) Publish to GitHub (Ubuntu → Git over SSH)
+Commit and push changes from Ubuntu:
+```
+git add -A
+git commit -m "Update scan + findings + reports"
+git push origin main
+```
+## Project Structure
+- sample_data/ — sample assets + scan inputs (sanitized/demo)
+- src/ — parsing, scoring, SLA assignment, report generation
+- outputs/ — prioritized CSV outputs
+- reports/ — executive and technical markdown reports
+- docs/ — triage workflow, false-positive handling, verification notes (optional/future)
 
+## Run it locally (optional)
+```
+python3 src/generate_reports.py \
+  --findings sample_data/scans/scan_findings.csv \
+  --assets sample_data/assets.csv \
+  --known-exploited sample_data/known_exploited_cves.txt \
+  --outdir outputs \
+  --reportdir reports
+```
+## Evidence (GitHub Actions)
+If Actions is enabled, this pipeline can run in CI and generate downloadable artifacts.
+
+**To verify:**
+
+**1.** GitHub repo → **Actions**
+
+**2.** Open the latest successful run
+
+**3.** Download the artifact (e.g., vulnops-artifacts) and review outputs
+
+## Version control approach (hybrid)
+
+To keep the repo recruiter-friendly and still provide proof:
+
+- **Commit:** key outputs and reports (easy to read directly in GitHub)
+
+- **Artifacts (Actions):** optionally publish full run artifacts for each CI run
+
+## Safety / ethics
+All scanning and testing should be performed only on systems you own or are authorized to assess.
+
+## Roadmap (future labs)
+
+This repo can be extended with additional security operations workflows, for example:
+- Windows target VM scanning + normalization
+- GRC evidence capture (controls → evidence mapping)
+- IAM review checks (accounts, permissions, drift)
+- Patch verification + compliance reporting
+- Ticket automation (prioritized findings → remediation tasks)
 
